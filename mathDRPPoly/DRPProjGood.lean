@@ -44,7 +44,118 @@ def proj (s : Set (σ → R)) (d : σ) : Set R := {r | ∃ t : (σ → R), t ∈
 -- Define polynomial ring of a fixed variable as a subring of MvPolynomial σ R
 -- f(x_d) is a single variable polynomial  .... addidative monomial in MvPolynomial algebra and prove using a singleton (subset of sigma) and prove we get a subalgebra
 
-def univ_polynomial (R : Type u) [CommRing R] (d : σ) : Subsemiring  (MvPolynomial σ R) := sorry
+def univ_polynomial (R : Type u) [CommRing R] (d : σ) : Subsemiring (MvPolynomial σ R)
+    where
+  carrier := {p : MvPolynomial σ R | ∀ (v₁ v₂ : σ → R), (v₁ d = v₂ d) → (MvPolynomial.eval v₁ p = MvPolynomial.eval v₂ p)}
+  zero_mem' := by
+    intros v₁ v₂ h_eq
+    simp [MvPolynomial.eval_zero]
+
+  one_mem' := by
+    intros v₁ v₂ h_eq
+    simp [MvPolynomial.eval_C]
+
+  add_mem' := by
+    intros p q hp hq v₁ v₂ h
+    simp [MvPolynomial.eval_add]
+    rw [hp v₁ v₂ h, hq v₁ v₂ h]
+
+  mul_mem' := by
+    intros p q hp hq v₁ v₂ h
+    simp [MvPolynomial.eval_mul]
+    rw [hp v₁ v₂ h, hq v₁ v₂ h]
+
+
+--  {p : MvPolynomial σ R | ∀ (v₁ v₂ : σ → R), (v₁ d = v₂ d) → (MvPolynomial.eval v₁ p = MvPolynomial.eval v₂ p)}
+--     (v₁ d = v₂ d) → (MvPolynomial.eval v₁ p = MvPolynomial.eval v₂ p)}
+-- { -- Define the carrier set of polynomials that only depend on d
+--   have carrier := {p : MvPolynomial σ R | ∀ (v₁ v₂ : σ → R),
+--     (v₁ d = v₂ d) → (MvPolynomial.eval v₁ p = MvPolynomial.eval v₂ p)}
+
+--   have zero_mem' : ∀ (v₁ v₂ : σ → R), (v₁ d = v₂ d) →
+
+
+--     have zero_eval : ∀ (v₁ v₂ : σ → R), (v₁ d = v₂ d) →
+--       MvPolynomial.eval v₁ (0 : MvPolynomial σ R) = MvPolynomial.eval v₂ 0,
+--     { intros v₁ v₂ h_eq,
+--       simp [MvPolynomial.eval_zero] },
+--     exact zero_eval
+--   end
+
+--   one_mem' :=
+--   begin
+--     have one_eval : ∀ (v₁ v₂ : σ → R), (v₁ d = v₂ d) →
+--       MvPolynomial.eval v₁ (1 : MvPolynomial σ R) = MvPolynomial.eval v₂ 1,
+--     { intros v₁ v₂ h_eq,
+--       simp [MvPolynomial.eval_one] },
+--     exact one_eval
+--   end,
+
+--   add_mem' :=
+--   begin
+--     have add_closed : ∀ p q ∈ carrier, ∀ (v₁ v₂ : σ → R), (v₁ d = v₂ d) →
+--       MvPolynomial.eval v₁ (p + q) = MvPolynomial.eval v₂ (p + q),
+--     { intros p q hp hq v₁ v₂ h_eq,
+--       simp [MvPolynomial.eval_add],
+--       rw [hp v₁ v₂ h_eq, hq v₁ v₂ h_eq] },
+--     exact add_closed
+--   end,
+--   mul_mem' :=
+--   begin
+--     have mul_closed : ∀ p q ∈ carrier, ∀ (v₁ v₂ : σ → R), (v₁ d = v₂ d) →
+--       MvPolynomial.eval v₁ (p * q) = MvPolynomial.eval v₂ (p * q),
+--     { intros p q hp hq v₁ v₂ h_eq,
+--       simp [MvPolynomial.eval_mul],
+--       rw [hp v₁ v₂ h_eq, hq v₁ v₂ h_eq] },
+--     exact mul_closed
+--   end
+
+
+
+
+--     -- Definition: zero polynomial is in the carrier
+--   -- have zero_mem' :=
+--   -- have zero_eval : (0 : MvPolynomial σ R) ∈ carrier := by
+--   --   intros v₁ v₂ h_eq
+--   --   simp [MvPolynomial.eval_zero]
+
+--   -- have zero_mem' := by
+--   --   have h : ∀ (v₁ v₂ : σ → R), v₁ d = v₂ d →
+--   --     MvPolynomial.eval v₁ (0 : MvPolynomial σ R) = MvPolynomial.eval v₂ 0 := by
+--   --       intros v₁ v₂ h_eq
+--   --       simp [MvPolynomial.eval_zero]
+--   --   exact h
+
+
+
+--   -- -- Prove it contains 0
+--   -- have zero_mem' := intros v₁ v₂ h
+--   --   simp [MvPolynomial.eval_zero]
+--   -- -- end,
+
+--   -- -- Prove it contains 1
+--   -- one_mem' :=
+--   -- begin
+--   --   intros v₁ v₂ h,
+--   --   simp [MvPolynomial.eval_one],
+--   -- end,
+
+--   -- -- Prove it's closed under addition
+--   -- add_mem' :=
+--   -- begin
+--   --   intros p q hp hq v₁ v₂ h,
+--   --   simp [MvPolynomial.eval_add],
+--   --   rw [hp v₁ v₂ h, hq v₁ v₂ h],
+--   -- end,
+
+--   -- -- Prove it's closed under multiplication
+--   -- mul_mem' :=
+--   -- begin
+--   --   intros p q hp hq v₁ v₂ h,
+--   --   simp [MvPolynomial.eval_mul],
+--   --   rw [hp v₁ v₂ h, hq v₁ v₂ h],
+--   -- end
+-- }
 
 -- The statement for Theorem 3
 -- tau is the index for system of equations, we could also restrict it later if necessary to a finset of
